@@ -1,57 +1,60 @@
 const fileHelper = require('../../helpers/fileHelper');
 const path = require('path');
 
-module.exports = function (dataSource)  {
-  this.modelsPath = path.join(__dirname, '../../db', dataSource + '.json');
+module.exports = function (model) {
+  const resultObj = { status: 'failed', error: '' }
+  const sourcePath = path.join(__dirname, '../../db', model + '.json');
+  const self = this;
 
   return {
-    async create(record) {
-      try {
-        let data = await fileHelper.readJson(modelsPath);
-        data.push(record);
-        this.save();
-        return true;
-      } catch (err) {
-        console.log(err);
-        return err;
+    db: ((scope) => {
+      return {
+        async create(record) {
+          try {
+            let data = await fileHelper.readJson(sourcePath);
+            data.push(record);
+            this.save();
+            return resultObj.status = 'success';
+
+          } catch (err) {
+            return resultObj.error = err;
+          }
+        },
+
+        async loadCollection() {
+          try {
+            await fileHelper.readJson(sourcePath).then((res) => {
+              self.collection = res;
+            });
+            return resultObj.status = 'success';
+
+          } catch (err) {
+            return resultObj.error = err;
+          }
+        },
+
+        async remove(n) {
+          try {
+            self.collection.splice(n, 1);
+            await fileHelper.writeJson(sourcePath, self.collection);
+            return resultObj.status = 'success';
+
+          } catch (err) {
+            return resultObj.error = err;
+          }
+        },
+
+        async update(id) {},
+        async save() {
+          try {
+            await fileHelper.writeJson(sourcePath, self.collection);
+            return resultObj.status = 'success';
+
+          } catch (err) {
+            return resultObj.error = err;
+          }
+        },
       }
-    },
-
-    async loadCollection() {
-      try {
-        return await fileHelper.readJson(modelsPath);
-      } catch (err) {
-        console.log(err);
-        return err;
-      }
-    },
-
-    async remove(n) {
-      try {
-
-        collection.splice(n, 1);
-        await fileHelper.writeJson(modelsPath, collection);
-        return true;
-
-      } catch (err) {
-        console.log(err);
-        return err;
-      }
-    },
-
-    async update(id) {
-
-    },
-
-    async save() {
-      try {
-        await fileHelper.writeJson(modelsPath, collection);
-        return true;
-      } catch (err) {
-        console.log(err);
-        return err;
-      }
-    },
+    })(self)
   }
-
 }

@@ -1,7 +1,5 @@
 const baseModel = require('../base/baseModel');
 
-const transactionProto = {};
-
 const create = ({ id, cardId, type, data, sum, time }) => {
 
   const base = baseModel(id);

@@ -1,26 +1,35 @@
 const dbadapter = require('./baseDataAdapter');
 
-async function baseCollection(modelName) {
-  const db = dbadapter.call(this, modelName);
-  this.collection = await db.loadCollection();
+function baseCollection(modelName) {
 
-  this.generateId = function() {   
-    return collection.reduce((max, item) => Math.max(max, item.id), 0) + 1;
+  const generateId = function () {
+    return this.collection.reduce((max, item) => Math.max(max, item.id), 0) + 1;
+  };
+  const findAllById = function (id) {
+    return this.collection.find((item) => item.id == id);
+  };
+  const getindexById = function (id) { return this.collection.findIndex((item) => item.id == id); };
+
+  const getFiltered = async function (filterFunc) {
+    return this.collection.filter(filterFunc);
   }
 
-  this.findElementById =  (id) => {
-      return collection.find((item) => item.id==id);
-  }
+  const getAll = function () { return this.collection; }
 
-  this.getindexById = (id) => {
-      return collection.findIndex((item)=> item.id==id);
+  return {
+    collection: null,
+    generateId,
+    findAllById,
+    getindexById,
+    getFiltered,
+    getAll,
+    async add() {},
+    async remove() {},
+    async getRecord() {}
   }
-
-  return Object.assign(this, {
-    async get(id) {},
-    async remove(id) {},
-    async getAll() {},
-    db
-  });
 }
-module.exports = baseCollection;
+
+module.exports = (modelName) => {
+  const base = baseCollection(modelName);
+  return Object.assign(base, dbadapter.call(base, modelName));
+};

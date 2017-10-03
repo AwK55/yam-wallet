@@ -1,9 +1,7 @@
 const baseCollection = require('../base/baseModelCollection');
 const transaction = require('./transaction');
 
-const initialize = () => {
-  const base = baseCollection('transactions');
-
+const transactionCollection = function () {
 
   const isDataValid = (tr) => tr &&
     Object.prototype.hasOwnProperty.call(tr, 'type') &&
@@ -11,30 +9,20 @@ const initialize = () => {
     Object.prototype.hasOwnProperty.call(tr, 'time') &&
     Object.prototype.hasOwnProperty.call(tr, 'sum');
 
-  return Object.assign(base, {
+  return {
     async add(data) {
-      let result = { success: false, error: '' }
       //check
       if (isDataValid(data)) {
-        data.id = generateId();
+        data.id = this.generateId();
         const newTransaction = transaction.create(data);
-        collection.push(newTransaction);
+        let result = this.db.create(newTransaction);
+        this.collection.push(newTransaction);
+        return result;
 
         result.success = await db.save();
-      }
-
-      return result;
-    },
-    getAll() {
-      return collection;
-    },
-    async getById(id) {
-      return await collection.find((item) => item.id === id);
-    },
-
-    async getFilteredCollection(filter) {
-      return await collection.filter(filter);
+      } else throw new Error('Invalid data');
     }
-  });
+  };
 }
-module.exports = initialize;
+const transactions = () => Object.assign(baseCollection('transactions'), transactionCollection());
+module.exports = transactions;
