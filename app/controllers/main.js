@@ -1,18 +1,15 @@
 'use strict'
+const {renderToStaticMarkup} = require('react-dom/server');
 
 module.exports = {
-	async root(ctx) {
-		ctx.body =`<!doctype html>
-        <html>
-            <head>
-                <link rel="stylesheet" href="/style.css">
-            </head>
-            <body>
-                <h1>Hello Smolny!</h1>
-            </body>
-        </html>`;
-    },
-    async error(ctx) {
-        throw Error('Oops!');
-    }
+  async root(ctx) {
+
+    const indexView = require('../views/index-server');
+    const indexViewHtml = renderToStaticMarkup(indexView());
+    ctx.body = indexViewHtml;
+
+  },
+  async error(ctx) {
+    throw Error('Oops!');
+  }
 }

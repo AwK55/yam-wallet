@@ -9,8 +9,8 @@ module.exports.load = function () {
   app.name = config.main.name;
   app.env = config.main.env;
 
-  app.use(middlewares());
   app.use(config.routes());
+  app.use(middlewares());
 
 
   app.listen(3000, () => {
