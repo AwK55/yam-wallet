@@ -27,7 +27,6 @@ module.exports = {
 		}
 	},
 	async getCards(ctx) {
-
 		let cards = await cardCollection.getAll();
 		ctx.body = cards;
     }

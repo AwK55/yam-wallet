@@ -1,8 +1,9 @@
 const Koa = require('koa');
 const middlewares = require('./app/middlewares/index');
 const config = require('./config/index');
+const logger = require('./app/services/logService')('app');
 
-module.exports.load = function () {
+module.exports.load = function () {  
 
   const app = new Koa();
 
@@ -14,6 +15,6 @@ module.exports.load = function () {
 
 
   app.listen(3000, () => {
-    console.log('YM Node School App listening on port 3000!');
+    logger.info('YM Node School App listening on port 3000!');
   });
 }

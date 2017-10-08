@@ -59,10 +59,11 @@
 		"babel-cli": "^6.26.0",
 		"webpack": "^3.6.0"
 	},
-	"dependencies": {
+	"dependencies": {		
 		"koa": "^2.3.0",
 		"koa-bodyparser": "^4.2.0",
 		"koa-router": "^7.2.1",
-		"koa-static": "^4.0.1"
+		"koa-static": "^4.0.1",
+		"winston": "^3.0.0-rc0"
 	}
 }

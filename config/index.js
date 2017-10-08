@@ -1,13 +1,12 @@
 'use strict';
 
-const _ = require('lodash');
-
 const main = require('./main');
 const routes = require('./routes');
-const koaConfig = require('./koa');
-
+const koa = require('./koa');
+const log = require('./logger');
 module.exports = {
     main,
-    routes
+    routes,
+    log
     //koaConfig
 }

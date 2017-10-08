@@ -1,5 +1,6 @@
 const fileHelper = require('../../helpers/fileHelper');
 const path = require('path');
+const logger = require('../../services/logService')('data-adapter');
 
 module.exports = function (model) {
   const resultObj = { status: 'failed', error: '' }
@@ -17,6 +18,7 @@ module.exports = function (model) {
             return resultObj.status = 'success';
 
           } catch (err) {
+            logger.error(err);
             return resultObj.error = err;
           }
         },
@@ -29,6 +31,7 @@ module.exports = function (model) {
             return resultObj.status = 'success';
 
           } catch (err) {
+            logger.error(err);
             return resultObj.error = err;
           }
         },
@@ -40,6 +43,7 @@ module.exports = function (model) {
             return resultObj.status = 'success';
 
           } catch (err) {
+
             return resultObj.error = err;
           }
         },
