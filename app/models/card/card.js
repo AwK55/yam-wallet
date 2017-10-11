@@ -1,31 +1,31 @@
-const cardHelper = require('../../helpers/cardHelper');
 const baseModel = require('../base/baseModel');
+// maybe shouldbe add as component
+const cardHelper = require('./cardHelper');
 
-const create = function({ id, cardNumber, balance }) {
+// should I make this object observable? (by adding eventemmiter)
+module.exports.create = function (data) {
 
-  const base = baseModel(id);
-  const number = cardNumber;
-  var balance = balance;
+  const base = baseModel(data.id);
+  const cardNumber = data.cardNumber;
+  const balance = data.balance;
+  const type = data.type;
 
-  // should I make this object observable? (by adding eventemmiter)
   return Object.assign(base, {
     get cardNumber() {
-      return number;
+      return cardNumber;
     },
 
     get balance() {
       return balance;
     },
 
-    set balance(balance) {
-      balance = balance;
+    set balance(sum) {
+      balance = sum;
     },
+
     get cardType() {
-      return cardHelper.getCardType(number);
+      return type;
     }
 
   });
 }
-
-
-module.exports.create = create;

@@ -1,47 +1,68 @@
 'use strict'
-const cardCollection = require('../models/card/cardCollection')();
-cardCollection.db.loadCollection();
+const cardService = require('../services/cardService');
+// where it should be?
+const cardHelper = require('../models/card/cardHelper');
+
+const isDataValid = (data) => data &&
+  Object.prototype.hasOwnProperty.call(data, 'cardNumber') &&
+  Object.prototype.hasOwnProperty.call(data, 'balance');
+
+function validateData(data) {
+
+  const result = { isValid: true };
+  if (!isDataValid(data)) {
+    result.error = 'Invalid data structure';
+    result.isValid = false;
+    return result;
+  }
+
+  data.cardNumber = data.cardNumber.replace(/\D/g, '');
+  if (cardHelper.luhnValidattion(data.cardNumber)) return result;
+  result.error = 'invalid card number';
+  result.isValid = false;
+  return result
+}
 
 module.exports = {
-	async create(ctx) {
-		//алгоритм Луна duplicate
-		//validateCard(callback add Card)
+  async create(ctx) {
 
-		const card = ctx.request.body[0];
-		const result = await cardCollection.add(card);
-
-		ctx.body = result;
-
-	},
-	async delete(ctx) {
-
-		if (ctx.params.id) {
-			let n =  parseInt(ctx.params.id);
-			let result = await cardCollection.remove(n)
-
-      ctx.body = result;
-
-		} else {
-			ctx.response.status(404);
-			ctx.response.write('Not found!');
-		}
-	},
-	async getCards(ctx) {
-		let cards = await cardCollection.getAll();
-		ctx.body = cards;
+    const data = ctx.request.body[0];
+    const result = validateData(data);
+    if (result && result.isValid) {
+      data.type = cardHelper.getCardType(data.cardNumber);
+      data.cardNumber = cardHelper.formatCardNumber(data.cardNumber, '-');
+      ctx.body  = await cardService.create(data);
+      return;
     }
+    ctx.status = 404;
+    ctx.body = result;
+  },
 
-    // async transer(ctx) {
-    //     const {
-	// 		amount,
-	// 		from,
-	// 		to
-	// 	} = req.query;
-	// 	ctx.json({
-	// 		result: 'success',
-	// 		amount,
-	// 		from,
-	// 		to
-	// 	});
-    // }
+  async delete(ctx) {
+
+    let n = parseInt(ctx.params.id);
+    if (n) {
+      ctx.body = await cardService.remove(n);
+    } else {
+      ctx.status = 404;
+      ctx.body = 'Wrong Id';
+    }
+  },
+  async getCards(ctx) {
+    ctx.body = await cardService.getCardsList();
+  }
+
+  // async transer(ctx) {
+  //     const {
+  // 		amount,
+  // 		from,
+  // 		to
+  // 	} = req.query;
+  // 	ctx.json({
+  // 		result: 'success',
+  // 		amount,
+  // 		from,
+  // 		to
+  // 	});
+  // }
 }

@@ -1,6 +1,6 @@
 const fileHelper = require('../../helpers/fileHelper');
 const path = require('path');
-const logger = require('../../services/logService')('data-adapter');
+const logger = require('../../../utils/logService')('data-adapter');
 
 module.exports = function (model) {
   const resultObj = { status: 'failed', error: '' }
@@ -14,7 +14,8 @@ module.exports = function (model) {
           try {
             let data = await fileHelper.readJson(sourcePath);
             data.push(record);
-            this.save();
+            self.collection = data;
+            await this.save();
             return resultObj.status = 'success';
 
           } catch (err) {
@@ -47,8 +48,9 @@ module.exports = function (model) {
             return resultObj.error = err;
           }
         },
-
-        async update(id) {},
+        async update() {
+          return await this.save;
+        },
         async save() {
           try {
             await fileHelper.writeJson(sourcePath, self.collection);

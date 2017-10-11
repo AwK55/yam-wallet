@@ -1,23 +1,41 @@
 'use strict'
-const transactCollection = require('../models/transaction/transactionCollection')();
-transactCollection.db.loadCollection();
+const transactiondService = require('../services/transactionService');
+
+const isDataValid = (tr) => tr &&
+  Object.prototype.hasOwnProperty.call(tr, 'type') &&
+  Object.prototype.hasOwnProperty.call(tr, 'data') &&
+  Object.prototype.hasOwnProperty.call(tr, 'sum');
+
+function validateData(data) {
+
+  const result = { isValid: true };
+  if (!isDataValid(data)) {
+    result.error = 'Invalid data structure';
+    result.isValid = false;
+    return result;
+  }
+
+  return result
+}
 
 module.exports = {
   async create(ctx) {
-    //check card?
 
-    const transaction = ctx.request.body[0];
-    transaction.cardId = ctx.params.id;
-    var result = await transactCollection.add(transaction);
-
+    const data = ctx.request.body[0];
+    const result = validateData(data);
+    data.cardId = parseInt(ctx.params.id);
+    if (result && result.isValid) {
+      const newTransaction = await transactiondService.create(result.data);
+      ctx.body = result;
+      return;
+    }
+    ctx.status = 404;
     ctx.body = result;
-
   },
   async getTransactionsByCard(ctx) {
-    if (ctx.params.id) {
-      let id = ctx.params.id;
-      let cards = await transactCollection.getFiltered((item) => item.cardId == id);
-      ctx.body = cards;
-    } else ctx.body = { success: false, error: 'transaction not found' };
+    const id = parseInt(ctx.params.id);
+
+    const transactions = await transactiondService.transactionList(id);
+    ctx.body = transactions;
   }
 }

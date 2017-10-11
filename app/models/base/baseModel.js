@@ -1,6 +1,9 @@
 module.exports = function (modelId) {
-  const id = modelId;
+  let id = modelId;
   return {
-    get id() { return id; }
+    get id() { return id; },
+    set id(newId) {
+      if (!id) id = newId;
+    }
   }
 }
