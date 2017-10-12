@@ -23,7 +23,7 @@ function validateData(data) {
 
 function prepareData(rawData) {
   const data = {};
-  data.sum = rawData.amount;
+  data.sum = Math.abs(parseFloat(rawData.amount));
   data.data = rawData.phone;
   data.type = 'paymentMobile';
 
@@ -46,7 +46,7 @@ module.exports = {
     ctx.status = 404;
     ctx.body = result;
   },
-  async getTransactionsByCard(ctx) {
+  async getPayTransactionsByCard(ctx) {
     const id = parseInt(ctx.params.id);
 
     const transactions = await transactiondService.transactionList(id);
