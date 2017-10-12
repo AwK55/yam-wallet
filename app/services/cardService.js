@@ -32,7 +32,7 @@ function validateModel(card) {
  */
 function validateBalance(card, sum) {
 
-  return (card.balance - sum) > 0;
+  return (card.balance + Math.abs(sum)) > 0;
 }
 
 module.exports = {

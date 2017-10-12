@@ -39,5 +39,24 @@ module.exports = {
 
     const transactions = await transactiondService.transactionList(id);
     ctx.body = transactions;
+  },
+  async transer(ctx) {
+
+    let data = ctx.request.body[0];
+    data.cardId = parseInt(ctx.params.id);
+    data = prepareData(data);
+    const result = validateData(data);
+    if (result && result.isValid) {
+      const newTransactionSent = await transactiondService.create(data);
+
+    }
+
+    const { amount, from, to } = ctx;
+    ctx.body({
+      result: 'success',
+      amount,
+      from,
+      to
+    });
   }
 }

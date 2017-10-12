@@ -52,17 +52,4 @@ module.exports = {
     ctx.body = await cardService.getCardsList();
   }
 
-  // async transer(ctx) {
-  //     const {
-  // 		amount,
-  // 		from,
-  // 		to
-  // 	} = req.query;
-  // 	ctx.json({
-  // 		result: 'success',
-  // 		amount,
-  // 		from,
-  // 		to
-  // 	});
-  // }
 }
