@@ -2,6 +2,11 @@
 ## TODO
 1. redirection on static pages (like 404);
 2. tests
+    - use Jest
+    - add jasmine for counting coverage
+    - routing by supertest
+    - test components using enzyme
+
 3. transaction specified controllers withvalidation
 4. base service
 5. create static page

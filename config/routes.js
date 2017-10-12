@@ -7,8 +7,8 @@ const app = require('koa'),
 
 
 module.exports = () => {
-  router.get('/', mainController.root);
-  router.get('/error', mainController.error);
+  router.get('/', main.root);
+  router.get('/error', main.error);
 
   //router.get('/transfer', cardController.transer);
 

@@ -47,7 +47,7 @@ module.exports = {
     data = prepareData(data);
     const result = validateData(data);
     if (result && result.isValid) {
-      const newTransactionSent = await transactiondService.create(data);
+      const newTransactionSent = await transactiondService.transfer(data);
 
     }
 

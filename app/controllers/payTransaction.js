@@ -4,8 +4,8 @@ const transactiondService = require('../services/transactionService');
 const isDataValid = (data) => data &&
   Object.prototype.hasOwnProperty.call(data, 'type') &&
   Object.prototype.hasOwnProperty.call(data, 'data') &&
-  Object.prototype.hasOwnProperty.call(data, 'sum') &&
-  isNaN(data.cardId);
+  Object.prototype.hasOwnProperty.call(data, 'amount') &&
+  !isNaN(data.cardId);
 
 function validateData(data) {
 
@@ -33,9 +33,9 @@ function prepareData(rawData) {
 module.exports = {
   async create(ctx) {
 
-    const rowData = ctx.request.body[0];
-    rowData.cardId = parseInt(ctx.params.id);
-    const result = validateData(rowData);
+    const rawData = ctx.request.body[0];
+    rawData.cardId = parseInt(ctx.params.id);
+    const result = validateData(rawData);
 
     if (result && result.isValid) {
       const data = prepareData(rawData);

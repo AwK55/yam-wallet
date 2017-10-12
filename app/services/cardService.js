@@ -22,7 +22,6 @@ function validateModel(card) {
   return errors;
 }
 
-
 /**
  *check can pay by this card
  *

@@ -25,15 +25,21 @@ function validateModel(transaction) {
 module.exports = {
 
   async create(data) {
-    const newTransaction = transactionModel.create({ ...data
-    });
+    const newTransaction = transactionModel.create(data);
     const card = cardService.getCard(newTransaction.cardId);
 
-    let result = validateModel(transaction);
+    let result = validateModel(newTransaction);
     if (result.length) return result;
     result = await cardService.updateBalance(card, newTransaction.sum);
     if (result) return result;
     return await transactCollection.add(newTransaction);
+  },
+
+  async transfer(data) {
+    const newTransaction = transactionModel.create({ ...data});
+    const cardSender = cardService.getCard(newTransaction.cardId);
+    const cardReciver = cardService.getCard(newTransaction.cardId);
+
   },
 
   transactionList(cardId) {
