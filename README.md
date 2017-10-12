@@ -1,4 +1,12 @@
 # Приложение школы Node.js «Кошелёк»
+## TODO
+1. redirection on static pages (like 404);
+2. tests
+3. transaction specified controllers withvalidation
+4. base service
+5. create static page
+6. rewrite webpackConfig and add optimizations
+7. restarting server after failing
 
 ## Install
 ```sh
@@ -10,11 +18,4 @@ npm i
 npm start
 ```
 
-## TODO
-1. redirection on static pages (like 404);
-2. tests
-3. transaction specified controllers withvalidation
-4. base service
-5. create static page
-6. rewrite webpackConfig and add optimizations
 

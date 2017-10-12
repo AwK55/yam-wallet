@@ -9,7 +9,9 @@ const isDataValid = (data) => data &&
 
 function validateData(data) {
 
-  const result = { isValid: true };
+  const result = {
+    isValid: true
+  };
   if (!isDataValid(data)) {
     result.error = 'Invalid data structure';
     result.isValid = false;
@@ -19,14 +21,24 @@ function validateData(data) {
   return result
 }
 
+function prepareData(rawData) {
+  const data = {};
+  data.sum = rawData.amount;
+  data.data = rawData.phone;
+  data.type = 'paymentMobile';
+
+  return data;
+}
+
 module.exports = {
   async create(ctx) {
 
-    const data = ctx.request.body[0];
-    data.cardId = parseInt(ctx.params.id);
-    const result = validateData(data);
+    const rowData = ctx.request.body[0];
+    rowData.cardId = parseInt(ctx.params.id);
+    const result = validateData(rowData);
 
     if (result && result.isValid) {
+      const data = prepareData(rawData);
       const newTransaction = await transactiondService.create(data);
       ctx.body = result;
       return;

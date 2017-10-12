@@ -7,13 +7,13 @@ const cardCollection = function () {
       let result = await this.db.create(card);
       return result;
     },
-    async update(card) {
+    async update() {
       // const prevCard = this.getRecord(card.id);
       // for (prop in prevCard) {
       //   if (card[prop])
       //     prevCard[prop] = card[prop];
       // }
-      await this.db.save();
+      if(!await this.db.update()) return 'Db update error';
     },
     async remove(id) {
       let n = this.getindexById(id);

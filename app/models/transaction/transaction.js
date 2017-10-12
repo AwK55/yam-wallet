@@ -6,7 +6,14 @@ const transactionTypes = {
 
 const MAX_TRANS_SUM = 5000;
 
-module.exports.create = ({ id, cardId, type, data, sum, time }) => {
+module.exports.create = ({
+  id,
+  cardId,
+  type,
+  data,
+  sum,
+  time
+}) => {
 
   const base = baseModel(id);
   const trCardId = cardId;
@@ -16,6 +23,9 @@ module.exports.create = ({ id, cardId, type, data, sum, time }) => {
   const trTime = time || new Date();
 
   return Object.assign(base, {
+    getMaxLimit() {
+      return MAX_TRANS_SUM;
+    },
     get data() {
       return trData;
     },

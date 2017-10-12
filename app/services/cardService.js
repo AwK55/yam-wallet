@@ -1,11 +1,13 @@
 const cardCollection = require('../models/card/cardCollection')();
 const card = require('../models/card/card');
 
-cardCollection.db.loadCollection();
+cardCollection.db.loadCollection()
+  .catch((res) => {
+    throw new Error('CardCollection is not loaded');
+  });
 
-
-function haveDublicates(id) {
-  const dublicates = cardCollection.getFiltered((item) => card.number == item.number);
+function haveDublicates(cardNumber) {
+  const dublicates = cardCollection.getFiltered((item) => item.cardNumber = cardNumber);
   return dublicates.length > 0;
 }
 
@@ -16,7 +18,7 @@ function haveDublicates(id) {
  */
 function validateModel(card) {
   let errors = [];
-  if (haveDublicates(card.id)) errors.push('Card already added');
+  if (haveDublicates(card.cardNumber)) errors.push('Card already added');
   return errors;
 }
 
@@ -39,17 +41,15 @@ module.exports = {
 
     const newCard = card.create(data);
     const result = validateModel(newCard);
-    if(result.length) return result;
+    if (result.length) return result;
     return await cardCollection.add(newCard);
   },
 
-  updateBalance(card, sum) {
+  async updateBalance(card, sum) {
     const result = validateBalance(card, sum);
-    if (!result) {
-      card.balance -= sum;
-      cardCollection.update(card);
-    }
-    return result;
+    if (result.length) return result;
+    card.balance -= sum;
+    return await cardCollection.update();
   },
   getCard(id) {
     return cardCollection.getRecord(id);

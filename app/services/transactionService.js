@@ -1,12 +1,12 @@
 const cardService = require('./cardService');
 const transactCollection = require('../models/transaction/transactionCollection')();
-transactCollection.db.loadCollection();
+const transactionModel = require('../models/transaction/transaction');
 
+transactCollection.db.loadCollection()
+  .catch((res) => {
+    throw new Error('transactCollection is not loaded');
+  });
 
-function haveDublicates(id) {
-  const dublicates = cardCollection.getFiltered((item) => card.number == item.number);
-  return dublicates.length > 0;
-}
 /**
  * validate transaction logic
  *
@@ -15,21 +15,25 @@ function haveDublicates(id) {
  */
 function validateModel(transaction) {
   let errors = [];
-  if (haveDublicates(transaction.id)) errors.push('transaction already added');
+  if (transaction.sum > transactionModel.getMaxLimit())
+    errors.push(`Max transaction amount ${transactionModel.getMaxLimit()}`);
+
   return errors;
 }
 
 
 module.exports = {
 
-  create(data) {
-    const newTransaction = transaction.create(data);
+  async create(data) {
+    const newTransaction = transactionModel.create({ ...data
+    });
     const card = cardService.getCard(newTransaction.cardId);
 
     let result = validateModel(transaction);
-    result.push(cardService.updateBalance(card, transaction.sum))
-    if (!result) return transactCollection.add(card);
-    return result;
+    if (result.length) return result;
+    result = await cardService.updateBalance(card, newTransaction.sum);
+    if (result) return result;
+    return await transactCollection.add(newTransaction);
   },
 
   transactionList(cardId) {

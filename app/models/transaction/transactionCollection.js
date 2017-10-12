@@ -5,8 +5,8 @@ const transactionCollection = function () {
 
   return {
     async add(transaction) {
-      data.id = this.generateId();
-      let result = this.db.create(newTransaction);
+      transaction.id = this.generateId();
+      let result = this.db.create(transaction);
       return result;
     }
   };

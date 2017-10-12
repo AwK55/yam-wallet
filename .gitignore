@@ -7,4 +7,5 @@ Thumbs.db
 *.log
 npm-debug.log*
 .vscode
-public/bundle*.js
+public/bundle.js
+app/db/
