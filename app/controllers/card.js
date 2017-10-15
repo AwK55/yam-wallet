@@ -1,41 +1,22 @@
 'use strict'
 const cardService = require('../services/cardService');
-// where it should be?
+const validate = require('./validation/card');
 const cardHelper = require('../models/card/cardHelper');
 
-const isDataValid = (data) => data &&
-  Object.prototype.hasOwnProperty.call(data, 'cardNumber') &&
-  Object.prototype.hasOwnProperty.call(data, 'balance');
-
-function validateData(data) {
-
-  const result = { isValid: true };
-  if (!isDataValid(data)) {
-    result.error = 'Invalid data structure';
-    result.isValid = false;
-    return result;
-  }
-
-  data.cardNumber = data.cardNumber.replace(/\D/g, '');
-  if (cardHelper.luhnValidattion(data.cardNumber)) return result;
-  result.error = 'invalid card number';
-  result.isValid = false;
-  return result
-}
 
 module.exports = {
   async create(ctx) {
 
     const data = ctx.request.body[0];
-    const result = validateData(data);
-    if (result && result.isValid) {
-      data.type = cardHelper.getCardType(data.cardNumber);
-      data.cardNumber = cardHelper.formatCardNumber(data.cardNumber, '-');
-      ctx.body  = await cardService.create(data);
+    const result = await validate(data);
+    if (resul.error) {
+      ctx.status = 404;
+      ctx.body = result.value;
       return;
     }
-    ctx.status = 404;
-    ctx.body = result;
+    data.type = data.type || cardHelper.getCardType(data.cardNumber);
+    data.cardNumber = cardHelper.formatCardNumber(data.cardNumber, '-');
+    ctx.body = await cardService.create(data);
   },
 
   async delete(ctx) {
@@ -45,9 +26,10 @@ module.exports = {
       ctx.body = await cardService.remove(n);
     } else {
       ctx.status = 404;
-      ctx.body = 'Wrong Id';
+      ctx.body = 'Id is empty';
     }
   },
+
   async getCards(ctx) {
     ctx.body = await cardService.getCardsList();
   }

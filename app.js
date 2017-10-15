@@ -11,7 +11,6 @@ module.exports.load = function () {
   app.env = config.main.env;
 
   app.use(middlewares());
-  app.use(config.routes());
 
   app.listen(3000, () => {
     logger.info('YM Node School App listening on port 3000!');

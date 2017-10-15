@@ -31,7 +31,7 @@ function validateModel(card) {
  */
 function validateBalance(card, sum) {
 
-  return (card.balance + Math.abs(sum)) > 0;
+  return (card.balance + sum) >= 0;
 }
 
 module.exports = {
@@ -46,8 +46,8 @@ module.exports = {
 
   async updateBalance(card, sum) {
     const result = validateBalance(card, sum);
-    if (result.length) return result;
-    card.balance -= sum;
+    if (!result) return 'there are not enought money on this card';
+    card.balance += sum;
     return await cardCollection.update();
   },
   getCard(id) {

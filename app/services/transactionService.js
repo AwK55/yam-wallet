@@ -15,14 +15,23 @@ transactCollection.db.loadCollection()
  */
 function validateModel(transaction) {
   let errors = [];
-  if (transaction.sum > transactionModel.getMaxLimit())
+  if (Math.abs(transaction.sum) > transactionModel.getMaxLimit())
     errors.push(`Max transaction amount ${transactionModel.getMaxLimit()}`);
 
   return errors;
 }
 
+function getReceiver(data) {
+  const newData = Object.create(data);
+  newData.cardId = data.data;
+  newData.data = data.cardId;
+  newData.sum = -newData.sum;
+  return newData;
+}
 
 module.exports = {
+
+  transactionType: transactionModel.transactionType,
 
   async create(data) {
     const newTransaction = transactionModel.create(data);
@@ -36,10 +45,10 @@ module.exports = {
   },
 
   async transfer(data) {
-    const newTransaction = transactionModel.create({ ...data});
-    const cardSender = cardService.getCard(newTransaction.cardId);
-    const cardReciver = cardService.getCard(newTransaction.cardId);
-
+    if( data.cardId == data.data ) return "Cannot transfer to this card";
+    const sendRes = await this.create(data);    
+    if(sendRes.length) return sendRes;
+    return await this.create(getReceiver(data));
   },
 
   transactionList(cardId) {

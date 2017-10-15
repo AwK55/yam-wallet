@@ -1,13 +1,19 @@
 const baseModel = require('../base/baseModel');
 
-const transactionTypes = {
-
+module.exports.transactionType = {
+  prepaidCard: 'prepaidCard',
+  paymentMobile: 'paymentMobile',
+  card2Card: 'card2Card'
 };
 
+const MAX_TRANS_SUM = 5000;
+
+module.exports.getMaxLimit = function () {
+  return MAX_TRANS_SUM;
+};
 
 module.exports.create = (rawData) => {
-  
-  const MAX_TRANS_SUM = 5000;
+
   const base = baseModel(rawData.id);
   const cardId = rawData.cardId;
   const type = rawData.type;
@@ -16,9 +22,7 @@ module.exports.create = (rawData) => {
   const time = rawData.time || new Date();
 
   return Object.assign(base, {
-    getMaxLimit() {
-      return MAX_TRANS_SUM;
-    },
+
     get data() {
       return data;
     },

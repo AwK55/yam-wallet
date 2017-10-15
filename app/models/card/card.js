@@ -1,6 +1,4 @@
 const baseModel = require('../base/baseModel');
-// maybe shouldbe add as component
-const cardHelper = require('./cardHelper');
 
 // should I make this object observable? (by adding eventemmiter)
 module.exports.create = function (data) {
