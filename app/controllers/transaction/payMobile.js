@@ -4,8 +4,8 @@ const validate = require('../validation/payMobile');
 
 function prepareData(rawData) {
   const data = {};
-  data.sum = -Math.abs(parseFloat(rawData.amount));
-  data.data = rawData.phone;
+  data.sum = -Math.abs(parseFloat(rawData.sum));
+  data.data = rawData.phoneNumber;
   data.type = transactiondService.transactionType.paymentMobile;
   data.cardId = rawData.cardId;
 
@@ -15,7 +15,7 @@ function prepareData(rawData) {
 module.exports = {
   async create(ctx) {
 
-    const rawData = ctx.request.body[0];
+    const rawData = ctx.request.body;
     rawData.cardId = parseInt(ctx.params.id);
     let { error, value } = validate(rawData);
 

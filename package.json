@@ -61,6 +61,7 @@
 		"webpack": "^3.6.0"
 	},
 	"dependencies": {
+		"axios": "^0.16.2",
 		"joi": "^13.0.0",
 		"koa": "^2.3.0",
 		"koa-bodyparser": "^4.2.0",

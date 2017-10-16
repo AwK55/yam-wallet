@@ -22,5 +22,9 @@ module.exports = {
   async getTransactionsByCard(ctx) {
     const id = parseInt(ctx.params.id);
     if (id) ctx.body = await transactiondService.transactionList(id);
+  },
+
+  async getAll(ctx) {
+    ctx.body = await transactiondService.allTransactions();
   }
 }

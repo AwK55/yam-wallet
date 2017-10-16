@@ -53,6 +53,10 @@ module.exports = {
 
   transactionList(cardId) {
     return transactCollection.getFiltered((item) => item.cardId == cardId);
+  },
+
+  allTransactions() {
+    return transactCollection.getAll();
   }
 
 };

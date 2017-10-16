@@ -2,7 +2,7 @@ const Joi = require('joi');
 
 const schema = {
   receiverCardId: Joi.number().required(),
-  amount: Joi.number().required().negative(),
+  amount: Joi.number().required().positive(),
   type: Joi.string().optional()
 };
 

@@ -20,10 +20,10 @@ module.exports = () => {
   router.post('/cards/:id/transactions', transaction.create);
 
   router.post('/cards/:id/pay', pay.create)
-
   router.post('/cards/:id/transfer', transfer.create);
-
   router.post('/cards/:id/fill', fill.create);
+
+  router.get('/transactions/', transaction.getAll);
 
   return router.routes();
 
