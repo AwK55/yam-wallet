@@ -25,8 +25,8 @@ const BalanceSum = styled.span`
 const Header = ({activeCard}) => (
 	<HeaderLayout>
 		<Balance>
-			{`${activeCard.bankName}: `}
-			<BalanceSum>{`${activeCard.balance} ₽`}</BalanceSum>
+			{`${activeCard && activeCard.bankName}: `}
+			<BalanceSum>{`${activeCard && activeCard.balance} ₽`}</BalanceSum>
 		</Balance>
 		<UserInfo />
 	</HeaderLayout>

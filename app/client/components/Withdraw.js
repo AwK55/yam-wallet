@@ -83,7 +83,12 @@ class Withdraw extends Component {
 			return;
 		}
 
-		this.setState({sum: 0});
+		axios
+		.post(`/cards/${activeCard.id}/fill`, { sum})
+		.then(() => {
+			this.props.onTransaction();
+			this.setState({sum: 0});
+		});
 	}
 
 	/**

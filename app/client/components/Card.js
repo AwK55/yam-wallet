@@ -97,7 +97,8 @@ class Card extends Component {
 		if (type === 'select') {
 			const {activeCardIndex} = this.state;
 			const selectedCard = data[activeCardIndex];
-			const {bgColor, bankLogoUrl, brandLogoUrl} = selectedCard.theme;
+			let bgColor, bankLogoUrl, brandLogoUrl; 
+			if(selectedCard && selectedCard.theme) ({bgColor, bankLogoUrl, brandLogoUrl} = selectedCard.theme);
 
 			return (
 				<CardLayout active={true} bgColor={bgColor}>

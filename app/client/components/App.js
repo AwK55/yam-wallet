@@ -15,8 +15,8 @@ import {
 
 import './fonts.css';
 
-import cardsData from '../../db/cards.json';
-import transactionsData from '../../db/transactions.json';
+///import cardsData from '../../db/cards.json';
+//import transactionsData from '../../db/transactions.json';
 
 injectGlobal([`
 	html,
@@ -64,7 +64,6 @@ class App extends Component {
 				banksLogosPath: '/assets/',
 				brandsLogosPath: '/assets/'
 			});
-
 			return {
 				id: card.id,
 				balance: card.balance,
@@ -94,17 +93,32 @@ class App extends Component {
 	constructor() {
 		super();
 
-		const cardsList = App.prepareCardsData(cardsData);
-		const cardHistory = App.prepareHistory(cardsList, transactionsData);
+		//const cardsList = App.prepareCardsData(cardsData);
+		//const cardHistory = App.prepareHistory(cardsList, transactionsData);
 
 		this.state = {
-			cardsList,
-			cardHistory,
+			cardsList: [],
+			cardHistory: [],
 			activeCardIndex: 0,
 			removeCardId: 0,
 			isCardRemoving: false,
 			isCardsEditable: false
 		};
+	}
+
+	componentDidMount() {
+		var _this = this;
+		axios
+		.get(`/cards/`)
+		.then(({data}) => {
+			const cardsList = App.prepareCardsData(data);
+			_this.setState({cardsList});
+			return axios.get(`/transactions/`);
+		})
+		.then(({data})=> {
+			const cardHistory = App.prepareHistory(_this.state.cardsList, data);
+			_this.setState({cardHistory});
+		});
 	}
 
 	/**
