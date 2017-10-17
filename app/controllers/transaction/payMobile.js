@@ -4,8 +4,8 @@ const validate = require('../validation/payMobile');
 
 function prepareData(rawData) {
   const data = {};
-  data.sum = -Math.abs(parseFloat(rawData.sum));
-  data.data = rawData.phoneNumber;
+  data.sum = -(Math.abs(parseFloat(rawData.sum)) + Math.abs(parseFloat(rawData.commission)));
+  data.data = { phoneNumber: rawData.phoneNumber };
   data.type = transactiondService.transactionType.paymentMobile;
   data.cardId = rawData.cardId;
 

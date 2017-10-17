@@ -7,6 +7,7 @@ const schema = {
   phoneNumber: Joi.string().required().regex(/^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$/),
   type: Joi.string(),
   sum: Joi.number().positive(),
+  commision: Joi.number().positive()
 
 };
 

@@ -14,7 +14,7 @@ function prepareData(rawData) {
 module.exports = {
   async create(ctx) {
 
-    const rawData = ctx.request.body[0];
+    const rawData = ctx.request.body;
     rawData.cardId = parseInt(ctx.params.id);
     let {error, value} = validate(rawData);
 

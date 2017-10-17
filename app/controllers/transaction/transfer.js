@@ -4,8 +4,11 @@ const validate = require('../validation/transfer');
 
 function prepareData(rawData) {
   const data = {};
-  data.sum = -Math.abs(parseFloat(rawData.amount));
-  data.data = rawData.receiverCardId;
+  data.sum = -Math.abs(parseFloat(rawData.sum));
+  data.data = {
+    targetCardId: rawData.target,
+    cardNumber: ''
+  };
   data.type = transactiondService.transactionType.card2Card;
   data.cardId = rawData.cardId;
 
@@ -15,7 +18,7 @@ function prepareData(rawData) {
 module.exports = {
   async create(ctx) {
 
-    const rawData = ctx.request.body[0];
+    const rawData = ctx.request.body;
     rawData.cardId = parseInt(ctx.params.id);
     let { error, value } = validate(rawData);
 

@@ -21,12 +21,26 @@ function validateModel(transaction) {
   return errors;
 }
 
-function getReceiver(data) {
+function getSenderInfo(data) {
   const newData = Object.create(data);
-  newData.cardId = data.data;
-  newData.data = data.cardId;
-  newData.sum = -newData.sum;
+  const card = cardService.getCard(newData.data.targetCardId);
+  if (card && card.cardNumber) newData.data.cardNumber = card.cardNumber;
+
   return newData;
+}
+
+function getReceiverInfo(data) {
+  const newData = {};
+
+  newData.data = {}
+  newData.cardId = data.data.targetCardId;
+  newData.data.senderCardId = data.cardId;
+
+  const card = cardService.getCard(newData.data.senderCardId);
+  if (card && card.cardNumber) newData.data.cardNumber = card.cardNumber;
+  
+  newData.sum = -data.sum;
+  return Object.assign(Object.create(data),newData);
 }
 
 module.exports = {
@@ -45,10 +59,12 @@ module.exports = {
   },
 
   async transfer(data) {
-    if( data.cardId == data.data ) return "Cannot transfer to this card";
-    const sendRes = await this.create(data);    
-    if(sendRes.length) return sendRes;
-    return await this.create(getReceiver(data));
+    if (data.cardId == data.data) return "Cannot transfer to this card";
+
+    const sendRes = await this.create(getSenderInfo(data));
+
+    if (sendRes.length) return sendRes;
+    return await this.create(getReceiverInfo(data));
   },
 
   transactionList(cardId) {

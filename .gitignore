@@ -7,5 +7,15 @@ Thumbs.db
 *.log
 npm-debug.log*
 .vscode
-public/bundle.js
+public/*
+!public/assets/
+!public/fonts/
+!public/favicon.ico
+app/views/*
+!app/views/*.src.js
 app/db/
+
+package-lock.json
+logs/
+
+
