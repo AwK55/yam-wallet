@@ -4,7 +4,7 @@ const logger = require('../../../utils/logService')('data-adapter');
 
 module.exports = function (model) {
 
-  const sourcePath = path.join(__dirname, '../../db', model + '.json');
+  const sourcePath = path.join(__dirname, '../../data', model + '.json');
   const self = this;
 
   return {
