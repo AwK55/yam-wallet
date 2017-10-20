@@ -117,6 +117,11 @@ class Withdraw extends Component {
 	}
 }
 
+Withdraw.defaultProps = {
+	activeCard: {id:0},
+	inactiveCardsList: []
+  };
+
 Withdraw.propTypes = {
 	activeCard: PropTypes.shape({
 		id: PropTypes.number,

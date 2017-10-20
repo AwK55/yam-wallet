@@ -14,7 +14,7 @@ class Prepaid extends Component {
 	 */
 	constructor(props) {
 		super(props);
-
+		
 		this.state = {stage: 'contract'};
 	}
 
@@ -59,6 +59,11 @@ class Prepaid extends Component {
 		);
 	}
 }
+
+Prepaid.defaultProps = {
+	activeCard: {id:0},
+	inactiveCardsList: []
+  };
 
 Prepaid.propTypes = {
 	activeCard: PropTypes.shape({

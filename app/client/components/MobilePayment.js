@@ -63,6 +63,10 @@ class MobilePayment extends Component {
 	}
 }
 
+MobilePayment.defaultProps = {
+	activeCard: {id:0}
+  };
+
 MobilePayment.propTypes = {
 	activeCard: PropTypes.shape({
 		id: PropTypes.number,
