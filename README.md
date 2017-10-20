@@ -7,11 +7,13 @@
     - routing by supertest
     - test components using enzyme
 
-3. transaction specified controllers withvalidation
+3. transaction specified controllers with validation
 4. base service
 5. create static page
 6. rewrite webpackConfig and add optimizations
 7. restarting server after failing
+8. move card balance updating to model
+9. add middleware validator (https://github.com/luckcoding/koa-middle-validator)
 
 ## Install
 ```sh
