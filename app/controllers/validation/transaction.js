@@ -8,9 +8,7 @@ const schema = {
   data: Joi.string().optional()
 };
 
-const options = { allowUnknown: true };
-
 
 module.exports = (data) => {
-  return Joi.validate(data, schema, options);
+  return Joi.validate(data, schema,  appConfig.joi);
 }

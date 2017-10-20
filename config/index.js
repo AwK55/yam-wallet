@@ -3,8 +3,10 @@
 const main = require('./main');
 const koa = require('./koa');
 const log = require('./logger');
+const joi = require('./joi');
 module.exports = {
     main,
-    log
+    log,
+    joi
     //koaConfig
 }
