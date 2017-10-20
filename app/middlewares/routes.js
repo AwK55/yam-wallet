@@ -1,6 +1,6 @@
 const app = require('koa'),
   router = require('koa-router')(),
-  cards = require('../controllers/card'),
+  cards = require('../controllers/card/card'),
   main = require('../controllers/main'),
   transaction = require('../controllers/transaction/transaction'),
   fill = require('../controllers/transaction/fill'),
@@ -17,7 +17,7 @@ module.exports = () => {
   router.delete('/cards/:id', cards.delete);
 
   router.get('/cards/:id/transactions', transaction.getTransactionsByCard);
-  router.post('/cards/:id/transactions', transaction.create);
+  //router.post('/cards/:id/transactions', transaction.create);
 
   router.post('/cards/:id/pay', pay.create)
   router.post('/cards/:id/transfer', transfer.create);

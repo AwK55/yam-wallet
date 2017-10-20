@@ -4,6 +4,8 @@ const validate = require('../validation/transaction');
 
 
 module.exports = {
+  /*
+  
   async create(ctx) {
 
     const rawData = ctx.request.body;
@@ -17,11 +19,16 @@ module.exports = {
     }
     const newTransaction = await transactiondService.create(value);
     ctx.body = result;
-  },
+  }, */
 
   async getTransactionsByCard(ctx) {
     const id = parseInt(ctx.params.id);
-    if (id) ctx.body = await transactiondService.transactionList(id);
+    if (id && id>0) ctx.body = await transactiondService.transactionList(id);
+    else {
+      ctx.status = 404;
+      ctx.body = 'Card not found';
+      return;
+    }
   },
 
   async getAll(ctx) {

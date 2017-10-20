@@ -19,7 +19,7 @@ module.exports = {
   async create(ctx) {
 
     const rawData = ctx.request.body;
-    rawData.cardId = parseInt(ctx.params.id);
+    rawData.cardId = ctx.params.id;
     let { error, value } = validate(rawData);
 
     if (error) {
