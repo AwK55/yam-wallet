@@ -13,7 +13,6 @@ public/*
 !public/favicon.ico
 app/views/*
 !app/views/*.src.js
-app/db/
 
 package-lock.json
 logs/
