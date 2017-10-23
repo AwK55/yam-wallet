@@ -1,6 +1,9 @@
-const cardService = require('./cardService');
-const Transaction = require('../models/transaction/transaction')();
-const transactCollection = require('../models/modelCollection')();
+const cardService = require('./cardService'),
+  transaction = require('../models/transaction/transaction'),
+  Transaction = transaction(), //model
+  PayMobile = require('../models/transaction/payMobile')(),
+  Transfer = require('../models/transaction/transfer')(),
+  transactCollection = require('../models/modelCollection')(Transaction);
 
 /**
  * validate transaction logic
@@ -8,34 +11,50 @@ const transactCollection = require('../models/modelCollection')();
  * @param {transaction} transaction
  * @returns
  */
-function validateModel(transaction) {
+function validateModel(model) {
   let errors = [];
-  if (Math.abs(transaction.sum) > transaction.getMaxLimit())
+  if (Math.abs(model.sum) > transaction.getMaxLimit())
     errors.push(`Max transaction amount ${transaction.getMaxLimit()}`);
 
   return errors;
 }
 
-function getSenderInfo(data) {
-  const newData = Object.create(data);
-  const card = cardService.getCard(newData.data.targetCardId);
-  if (card && card.cardNumber) newData.data.cardNumber = card.cardNumber;
-
+async function getSenderInfo(data) {
+  const newData = Object.assign({}, data);
+  const card = await cardService.getCard(newData.data.cardId);
+  if (card && card.cardNumber) {
+    newData.data.cardNumber = card.cardNumber;
+    newData.data.card = card._id;
+  }
   return newData;
 }
 
-function getReceiverInfo(data) {
+async function getReceiverInfo(data) {
   const newData = {};
+  newData.data = {};
 
-  newData.data = {}
-  newData.cardId = data.data.targetCardId;
-  newData.data.senderCardId = data.cardId;
+  newData.cardId = data.data.cardId;
+  newData.data.cardId = data.cardId;
 
-  const card = cardService.getCard(newData.data.senderCardId);
-  if (card && card.cardNumber) newData.data.cardNumber = card.cardNumber;
-  
+  const card = await cardService.getCard(newData.data.cardId);
+  if (card && card.cardNumber) {
+    newData.data.cardNumber = card.cardNumber;
+    newData.data.card = card._id;
+  }
+
   newData.sum = -data.sum;
-  return Object.assign(Object.create(data),newData);
+  return Object.assign(Object.assign({}, data), newData);
+}
+
+async function createTypedTransaction(data) {
+  switch (data.type) {
+    case 'paymentMobile':
+      return await new PayMobile(data);
+    case 'card2Card':
+      return await new Transfer(data);
+    default:
+      return await new Transaction(data);
+  }
 }
 
 module.exports = {
@@ -43,28 +62,27 @@ module.exports = {
   transactionType: transaction.transactionType,
 
   async create(data) {
-    const newTransaction = new Transaction(data);
-    const card = cardService.getCard(newTransaction.cardId);
-    newTransaction.cardId = card._id;
-    
+    const newTransaction = await createTypedTransaction(data);
+    const card = await cardService.getCard(data.cardId);
+    newTransaction.card = card._id;
+
     let result = validateModel(newTransaction);
     if (result.length) return result;
-    result = await cardService.updateBalance(card, newTransaction.sum);
-    if (result) return result;
-    return await transactCollection.add(newTransaction);
+    //if (result) return result;
+    await transactCollection.add(newTransaction);
+    return await cardService.updateBalance(card, newTransaction.sum);
   },
 
   async transfer(data) {
     if (data.cardId == data.data) return "Cannot transfer to this card";
 
-    const sendRes = await this.create(getSenderInfo(data));
-
-    if (sendRes.length) return sendRes;
-    return await this.create(getReceiverInfo(data));
+    const sendRes = await this.create(await getSenderInfo(data));
+    return await this.create(await getReceiverInfo(data));
   },
 
-  transactionList(cardId) {
-    return transactCollection.getFiltered({cardId:});
+  async transactionList(cardId) {
+    const card = await cardService.getCard(cardId);
+    return await transactCollection.getFiltered({ card: card._id });
   },
 
   allTransactions() {

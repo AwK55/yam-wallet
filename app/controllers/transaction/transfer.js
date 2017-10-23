@@ -6,7 +6,7 @@ function prepareData(rawData) {
   const data = {};
   data.sum = -Math.abs(parseFloat(rawData.sum));
   data.data = {
-    targetCardId: rawData.target,
+    cardId: rawData.target,
     cardNumber: ''
   };
   data.type = transactiondService.transactionType.card2Card;

@@ -14,7 +14,7 @@ cardSchema.methods.canTransact = function (sum) {
   return (this.balance - sum) > 0;
 }
 
-module.exports = () => {  
-  cardSchema.plugin(global.dbConnection.autoIncrement.plugin, { model: 'Card', field: 'id' });
+module.exports = () => {
+  cardSchema.plugin(global.dbConnection.autoIncrement.plugin, { model: 'Card', field: 'id', startAt: 100 });
   return mongoose.model('Card', cardSchema);
 }

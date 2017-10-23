@@ -4,8 +4,8 @@ const validate = require('../validation/transaction');
 
 
 module.exports = {
-  /*
-  
+
+/*
   async create(ctx) {
 
     const rawData = ctx.request.body;
@@ -18,9 +18,9 @@ module.exports = {
       return;
     }
     const newTransaction = await transactiondService.create(value);
-    ctx.body = result;
-  }, */
-
+    ctx.body = newTransaction;
+  },
+*/
   async getTransactionsByCard(ctx) {
     const id = parseInt(ctx.params.id);
     if (id && id>0) ctx.body = await transactiondService.transactionList(id);

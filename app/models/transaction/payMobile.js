@@ -1,5 +1,7 @@
+const mongoose = require('mongoose'),
+  Schema = mongoose.Schema;
+const Transaction = require('./transaction')();
 
-const Transaction = require('./transaction');
 const options = { discriminatorKey: '_type' };
 const payTransactionSchema = new Schema({
   data: {
@@ -7,4 +9,7 @@ const payTransactionSchema = new Schema({
   }
 }, options);
 
-const PaymentMobile = Transaction.discriminator('paymentMobile', payTransactionSchema);
+module.exports = () => {
+  payTransactionSchema.plugin(global.dbConnection.autoIncrement.plugin, { model: 'Transaction', field: 'id', startAt: 100 });
+  Transaction.discriminator('PaymentMobile', payTransactionSchema);
+}

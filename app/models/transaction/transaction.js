@@ -1,15 +1,14 @@
 const mongoose = require('mongoose'),
-  Schema = mongoose.Schema,
-  autoIncrement = require('mongoose-auto-increment');
+  Schema = mongoose.Schema;
 
 const MAX_TRANS_SUM = 5000;
 
 const options = { discriminatorKey: '_type' };
 const transactionSchema = new Schema({
   id: { type: Number, unique: true },
-  cardId: { type: mongoose.Schema.Types.ObjectId, ref: 'Card' },
+  card: { type: Schema.Types.ObjectId, ref: 'Card' },
   sum: { type: Number, max: MAX_TRANS_SUM },
-  data: String,
+  //data: String,
   time: { type: Date, default: Date.now },
   created_at: { type: Date, default: Date.now },
   updated_at: { type: Date, default: Date.now },
@@ -19,7 +18,7 @@ const transactionSchema = new Schema({
 
 
 module.exports = () => {
-  transactionSchema.plugin(global.dbConnection.autoIncrement.plugin, { model: 'Transaction', field: 'id' });
+  transactionSchema.plugin(global.dbConnection.autoIncrement.plugin, { model: 'Transaction', field: 'id', startAt: 100 });
   return mongoose.model('Transaction', transactionSchema, 'transactions');
 };
 

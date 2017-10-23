@@ -23,9 +23,9 @@ function baseCollection(model) {
   }
 
   const remove = async function remove(id) {
-    const card = await this.collection.findOne({id: id})
+    const card = await this.collection.findOne({ id: id })
     return card.remove();
-     
+
   }
 
   const update = async function (card) {
@@ -46,7 +46,7 @@ function baseCollection(model) {
     add,
     update,
     remove,
-    count, 
+    count,
     clear
   }
 }
