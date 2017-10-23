@@ -1,29 +1,20 @@
-const baseModel = require('../base/baseModel');
+const mongoose = require('mongoose'),
+  Schema = mongoose.Schema,
+  autoIncrement = require('mongoose-auto-increment');
 
-// should I make this object observable? (by adding eventemmiter)
-module.exports.create = function (data) {
+const cardSchema = new Schema({
+  cardNumber: String,
+  id: { type: Number, unique: true },
+  balance: Number,
+  created_at: { type: Date, default: Date.now },
+  updated_at: { type: Date, default: Date.now }
+});
 
-  const base = baseModel(data.id);
-  const cardNumber = data.cardNumber;
-  const balance = data.balance;
-  const type = data.type;
+cardSchema.methods.canTransact = function (sum) {
+  return (this.balance - sum) > 0;
+}
 
-  return Object.assign(base, {
-    get cardNumber() {
-      return cardNumber;
-    },
-
-    get balance() {
-      return balance;
-    },
-
-    set balance(sum) {
-      balance = sum;
-    },
-
-    get cardType() {
-      return type;
-    }
-
-  });
+module.exports = () => {  
+  cardSchema.plugin(global.dbConnection.autoIncrement.plugin, { model: 'Card', field: 'id' });
+  return mongoose.model('Card', cardSchema);
 }

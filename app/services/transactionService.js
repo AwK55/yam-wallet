@@ -1,11 +1,6 @@
 const cardService = require('./cardService');
-const transactCollection = require('../models/transaction/transactionCollection')();
-const transactionModel = require('../models/transaction/transaction');
-
-transactCollection.db.loadCollection()
-  .catch((res) => {
-    throw new Error('transactCollection is not loaded');
-  });
+const Transaction = require('../models/transaction/transaction')();
+const transactCollection = require('../models/modelCollection')();
 
 /**
  * validate transaction logic
@@ -15,8 +10,8 @@ transactCollection.db.loadCollection()
  */
 function validateModel(transaction) {
   let errors = [];
-  if (Math.abs(transaction.sum) > transactionModel.getMaxLimit())
-    errors.push(`Max transaction amount ${transactionModel.getMaxLimit()}`);
+  if (Math.abs(transaction.sum) > transaction.getMaxLimit())
+    errors.push(`Max transaction amount ${transaction.getMaxLimit()}`);
 
   return errors;
 }
@@ -45,12 +40,13 @@ function getReceiverInfo(data) {
 
 module.exports = {
 
-  transactionType: transactionModel.transactionType,
+  transactionType: transaction.transactionType,
 
   async create(data) {
-    const newTransaction = transactionModel.create(data);
+    const newTransaction = new Transaction(data);
     const card = cardService.getCard(newTransaction.cardId);
-
+    newTransaction.cardId = card._id;
+    
     let result = validateModel(newTransaction);
     if (result.length) return result;
     result = await cardService.updateBalance(card, newTransaction.sum);
@@ -68,7 +64,7 @@ module.exports = {
   },
 
   transactionList(cardId) {
-    return transactCollection.getFiltered((item) => item.cardId == cardId);
+    return transactCollection.getFiltered({cardId:});
   },
 
   allTransactions() {

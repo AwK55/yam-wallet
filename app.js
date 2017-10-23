@@ -1,9 +1,13 @@
 const Koa = require('koa');
+global.dbConnection = require('./mongooseConnection');
 const middlewares = require('./app/middlewares/index');
 const config = require('./config/index');
 const logger = require('./utils/logService')('app');
 
+
 module.exports.load = function () {
+
+  global.appConfig = config;
 
   const app = new Koa();
 

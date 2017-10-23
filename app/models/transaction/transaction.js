@@ -1,4 +1,27 @@
-const baseModel = require('../base/baseModel');
+const mongoose = require('mongoose'),
+  Schema = mongoose.Schema,
+  autoIncrement = require('mongoose-auto-increment');
+
+const MAX_TRANS_SUM = 5000;
+
+const options = { discriminatorKey: '_type' };
+const transactionSchema = new Schema({
+  id: { type: Number, unique: true },
+  cardId: { type: mongoose.Schema.Types.ObjectId, ref: 'Card' },
+  sum: { type: Number, max: MAX_TRANS_SUM },
+  data: String,
+  time: { type: Date, default: Date.now },
+  created_at: { type: Date, default: Date.now },
+  updated_at: { type: Date, default: Date.now },
+  type: { type: String }
+}, options);
+
+
+
+module.exports = () => {
+  transactionSchema.plugin(global.dbConnection.autoIncrement.plugin, { model: 'Transaction', field: 'id' });
+  return mongoose.model('Transaction', transactionSchema, 'transactions');
+};
 
 module.exports.transactionType = {
   prepaidCard: 'prepaidCard',
@@ -6,37 +29,6 @@ module.exports.transactionType = {
   card2Card: 'card2Card'
 };
 
-const MAX_TRANS_SUM = 5000;
-
 module.exports.getMaxLimit = function () {
   return MAX_TRANS_SUM;
-};
-
-module.exports.create = (rawData) => {
-
-  const base = baseModel(rawData.id);
-  const cardId = rawData.cardId;
-  const type = rawData.type;
-  const data = rawData.data;
-  const sum = rawData.sum;
-  const time = rawData.time || new Date();
-
-  return Object.assign(base, {
-
-    get data() {
-      return data;
-    },
-    get sum() {
-      return sum;
-    },
-    get cardId() {
-      return cardId;
-    },
-    get time() {
-      return time;
-    },
-    get type() {
-      return type;
-    }
-  });
 };

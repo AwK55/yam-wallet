@@ -1,12 +1,14 @@
 'use strict';
 
-const main = require('./main');
-const koa = require('./koa');
-const log = require('./logger');
-const joi = require('./joi');
+const main = require('./main'),
+  koa = require('./koa'),
+  log = require('./logger'),
+  joi = require('./joi'),
+  db = require('./db');
 module.exports = {
-    main,
-    log,
-    joi
-    //koaConfig
+  main,
+  log,
+  joi,
+  db
+  //koaConfig
 }
