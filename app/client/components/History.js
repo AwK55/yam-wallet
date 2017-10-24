@@ -24,7 +24,8 @@ const HistoryTitle = styled.div`
 	color: rgba(0, 0, 0, 0.4);
 	font-size: 15px;
 	line-height: 30px;
-	text-transform: uppercase;
+	text-transform: uppercase;	
+	position: relative;	
 `;
 
 const HistoryContent = styled.div`
@@ -79,7 +80,20 @@ const HistoryItemSum = styled.div`
 	font-weight: bold;
 `;
 
-const History = ({cardHistory}) => {
+const HistoryDownloadButton = styled(`a`)`
+	position: absolute;
+	right: 12px;
+	top: 5px;
+`;
+
+const DownloadImage = styled.img`
+display:inline`;
+
+const History = ({cardHistory, activeCard}) => {
+
+	const getCardId = (card) => {
+		if(card && card.id) return card.id;
+	};
 	const getHistoryItemTitle = (item) => {
 		let typeTitle = '';
 
@@ -135,7 +149,11 @@ const History = ({cardHistory}) => {
 
 	return (
 		<HistoryLayout>
-			<HistoryTitle>Сегодня</HistoryTitle>
+			<HistoryTitle>Сегодня
+				<HistoryDownloadButton href={`/cards/${getCardId(activeCard)}/file-transactions/`}>
+					 <DownloadImage src="/assets/download.svg"/>
+				</HistoryDownloadButton>
+			</HistoryTitle>
 			{getContent(cardHistory)}
 		</HistoryLayout>
 	);
