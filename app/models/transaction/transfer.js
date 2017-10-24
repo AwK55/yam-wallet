@@ -1,6 +1,6 @@
 const mongoose = require('mongoose'),
-  Schema = mongoose.Schema;
-const Transaction = require('./transaction')();
+  Schema = mongoose.Schema,
+  Transaction = require('./transaction')();
 
 const options = { discriminatorKey: '_type' };
 
@@ -16,4 +16,3 @@ module.exports = () => {
   transferTransactionSchema.plugin(global.dbConnection.autoIncrement.plugin, { model: 'Transaction', field: 'id', startAt: 100 });
   return Transaction.discriminator('Transfer', transferTransactionSchema);
 };
-

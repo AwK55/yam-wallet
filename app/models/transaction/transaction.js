@@ -1,7 +1,7 @@
 const mongoose = require('mongoose'),
   Schema = mongoose.Schema;
 
-const MAX_TRANS_SUM = 5000;
+const MAX_TRANS_SUM = 5000; // too bad
 
 const options = { discriminatorKey: '_type' };
 const transactionSchema = new Schema({

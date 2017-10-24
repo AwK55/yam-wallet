@@ -3,12 +3,7 @@ function baseCollection(model) {
   const collection = model;
 
   const getRecord = async function (id) {
-    try {
-      return await this.collection.findOne({ id: id });
-    } catch (error) {
-      //log
-      throw new Error(error);
-    }
+    return await this.collection.findOne({ id: id });
   }
 
   const clear = async function clear() {
@@ -36,6 +31,16 @@ function baseCollection(model) {
   const add = async function (model) {
     return model.validate()
       .then(res => model.save());
+  }
+
+  const getFilteredStream = function(filter) {
+    var cursor = this.collection.find(filter).cursor();
+    cursor.on('data', function(doc) {
+      // Called once for every document
+    });
+    cursor.on('close', function() {
+      // Called when done
+    });
   }
 
   return {

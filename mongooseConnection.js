@@ -3,6 +3,7 @@ const mongoose = require('mongoose'),
 
 const config = require('./config/');
 const db_server = process.env.DB_ENV || 'primary';
+mongoose.Promise = global.Promise;
 
 mongoose.connection.on("connected", function (ref) {
   console.log("Connected to " + db_server + " DB!");

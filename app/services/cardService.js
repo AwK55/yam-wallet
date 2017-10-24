@@ -27,9 +27,11 @@ module.exports = {
     card.balance += sum;
     return await cardCollection.update(card);
   },
+
   getCard(id) {
     return cardCollection.getRecord(id);
   },
+
   getCardsList() {
     return cardCollection.getAll();
   },
