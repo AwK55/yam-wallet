@@ -17,7 +17,7 @@ const transactionSchema = new Schema({
 
 
 
-module.exports = () => {
+module.exports.model = function () {
   transactionSchema.plugin(global.dbConnection.autoIncrement.plugin, { model: 'Transaction', field: 'id', startAt: 100 });
   return mongoose.model('Transaction', transactionSchema, 'transactions');
 };

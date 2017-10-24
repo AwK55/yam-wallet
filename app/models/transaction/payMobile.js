@@ -1,6 +1,6 @@
 const mongoose = require('mongoose'),
   Schema = mongoose.Schema,
-  Transaction = require('./transaction')();
+  Transaction = require('./transaction').model();
 
 const options = { discriminatorKey: '_type' };
 const payTransactionSchema = new Schema({
