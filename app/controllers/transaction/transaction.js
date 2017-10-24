@@ -2,7 +2,21 @@
 const transactiondService = require('../../services/transactionService');
 const validate = require('../validation/transaction');
 
+function getFormatedDate() {
+  var today = new Date();
+  var dd = today.getDate();
 
+  var mm = today.getMonth() + 1;
+  var yyyy = today.getFullYear();
+  if (dd < 10) {
+    dd = '0' + dd;
+  }
+
+  if (mm < 10) {
+    mm = '0' + mm;
+  }
+  return  mm + '-' + dd + '-' + yyyy
+}
 module.exports = {
 
   /*
@@ -41,7 +55,7 @@ module.exports = {
       ctx.statusCode = 200;
       ctx.set({
         'Content-Type': 'text/csv',
-        'Content-Disposition': 'attachment; filename=export.csv'
+        'Content-Disposition': `attachment; filename=${getFormatedDate()}-transactions-history.csv`
       })
       ctx.body = await transactiondService.TransactionListCsv(id);
     }
