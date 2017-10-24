@@ -1,10 +1,13 @@
 const cardService = require('./cardService'),
+  csvService = require('./csvService'),
+  dataAnonymazierStream = require('./dataAnonymazier');
   transaction = require('../models/transaction/transaction'),
-  Transaction = transaction(), //model
-  PayMobile = require('../models/transaction/payMobile')(),
-  Transfer = require('../models/transaction/transfer')(),
-  transactCollection = require('../models/modelCollection')(Transaction);
 
+  PayMobile = require('../models/transaction/payMobile'),
+  Transfer = require('../models/transaction/transfer'),
+  transactCollection = require('../models/modelCollection')(transaction.model());
+
+  const Transaction = transaction.model();
 /**
  * validate transaction logic
  *
@@ -81,12 +84,36 @@ module.exports = {
   },
 
   async transactionList(cardId) {
+    // rewrite to cursor
     const card = await cardService.getCard(cardId);
     return await transactCollection.getFiltered({ card: card._id });
   },
 
   allTransactions() {
     return transactCollection.getAll();
-  }
+  },
 
+  async TransactionListCsv(cardId) {
+    const options = {
+      headers: ['Time', 'Sum', 'Type', 'Data'],
+      alias: {
+        'Time': 'time',
+        'Sum': 'sum',
+        'Type': 'type'
+      },
+      virtuals: {
+        'Data': function (doc) {
+          if (typeof doc.data === 'string') return doc.data;
+          if (doc.cardNumber) return doc.cardNumber;
+          else doc.phoneNumber;
+        }
+      }
+    };
+
+    const card = await cardService.getCard(cardId);
+    return await transactCollection
+      .getFilteredStream({ card: card._id })
+      .pipe(dataAnonymazierStream())
+      .pipe(csvService(options));
+  }
 };

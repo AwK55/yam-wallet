@@ -33,19 +33,14 @@ function baseCollection(model) {
       .then(res => model.save());
   }
 
-  const getFilteredStream = function(filter) {
-    var cursor = this.collection.find(filter).cursor();
-    cursor.on('data', function(doc) {
-      // Called once for every document
-    });
-    cursor.on('close', function() {
-      // Called when done
-    });
+  const getFilteredStream = function (filter) {
+    return this.collection.find(filter).lean().cursor();
   }
 
   return {
     collection: collection,
     getFiltered,
+    getFilteredStream,
     getAll,
     getRecord,
     add,
