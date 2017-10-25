@@ -3,8 +3,8 @@ const cardService = require('./cardService'),
   dataAnonymazierStream = require('./dataAnonymazier');
   transaction = require('../models/transaction/transaction'),
 
-  PayMobile = require('../models/transaction/payMobile'),
-  Transfer = require('../models/transaction/transfer'),
+  PayMobile = require('../models/transaction/payMobile')(),
+  Transfer = require('../models/transaction/transfer')(),
   transactCollection = require('../models/modelCollection')(transaction.model());
 
   const Transaction = transaction.model();
@@ -72,8 +72,9 @@ module.exports = {
     let result = validateModel(newTransaction);
     if (result.length) return result;
     //if (result) return result;
-    await transactCollection.add(newTransaction);
-    return await cardService.updateBalance(card, newTransaction.sum);
+    const newTr = await transactCollection.add(newTransaction);
+    await cardService.updateBalance(card, newTransaction.sum);
+    return newTr;
   },
 
   async transfer(data) {
@@ -89,8 +90,8 @@ module.exports = {
     return await transactCollection.getFiltered({ card: card._id });
   },
 
-  allTransactions() {
-    return transactCollection.getAll();
+  async allTransactions() {
+    return await transactCollection.getAll();
   },
 
   async TransactionListCsv(cardId) {

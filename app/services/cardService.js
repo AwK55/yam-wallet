@@ -28,15 +28,17 @@ module.exports = {
     return await cardCollection.update(card);
   },
 
-  getCard(id) {
-    return cardCollection.getRecord(id);
+  async getCard(id) {
+    return await cardCollection.getRecord(id);
   },
 
-  getCardsList() {
-    return cardCollection.getAll();
+  async getCardsList() {
+    return await cardCollection.getAll();
   },
 
-  remove(id) {
-    return cardCollection.remove(id);
+  async remove(id) {
+    const res = await cardCollection.remove(id);
+    if(!res) return 'Not found';
+    
   }
 };

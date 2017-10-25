@@ -19,14 +19,15 @@ function baseCollection(model) {
 
   const remove = async function remove(id) {
     const card = await this.collection.findOne({ id: id })
-    return card.remove();
-
+    if (card) return card.remove();
   }
 
   const update = async function (card) {
     return await this.collection.findByIdAndUpdate(card._id, card);
   }
-  const getAll = function () { return this.collection.find({}); }
+  const getAll = async function () {
+    return await this.collection.find({});
+  }
 
   const add = async function (model) {
     return model.validate()

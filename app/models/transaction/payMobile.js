@@ -11,5 +11,5 @@ const payTransactionSchema = new Schema({
 
 module.exports = () => {
  // payTransactionSchema.plugin(global.dbConnection.autoIncrement.plugin, { model: 'Transaction', field: 'id', startAt: 100 });
-  Transaction.discriminator('PaymentMobile', payTransactionSchema);
+  return Transaction.discriminator('PaymentMobile', payTransactionSchema);
 }
