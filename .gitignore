@@ -17,5 +17,6 @@ app/db/
 
 package-lock.json
 logs/
+/fixtures/ 
 
 

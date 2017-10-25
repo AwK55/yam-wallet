@@ -4,8 +4,10 @@
   "description": "Приложение школы Node.js «Кошелёк»",
   "author": "",
   "scripts": {
-    "build": "webpack",
-    "start": "NODE_PATH=. node ./index.js",
+	"build": "webpack",
+	"tls:generate": "scripts/generate.sh",
+	"start": "NODE_PATH=. node ./index.js",
+	"start:https": "NODE_HTTPS=1 npm start",
     "watch": "NODE_PATH=. nodemon --watch  ./index.js",
     "test": "mocha ./tests/app --recursive",
     "test:client": "jest",
