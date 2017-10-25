@@ -16,6 +16,7 @@ app/views/*
 
 package-lock.json
 logs/
+/fixtures/ 
 
 
 app/views/index-server.js
