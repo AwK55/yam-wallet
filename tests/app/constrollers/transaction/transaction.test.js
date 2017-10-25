@@ -63,7 +63,6 @@ describe('Controllers', () => {
       const id = -1;
       const res = await request(server)
         .get(`/cards/${id}/transactions/`)
-        .set('Accept', 'application/json')
         .expect(404);
 
       expect(res.statusCode).to.be.eq(404);
@@ -197,6 +196,39 @@ describe('Controllers', () => {
         expect(res.body.details).to.be.exist;
         expect(res.body.details[0].message).to.be.eq('"target" must be a number');
         expect(res.statusCode).to.be.eq(404);
+      });
+    });
+
+    describe('Send csv file of history transactions with GET /cards/:id/file-transactions/', () => {
+      const data = {
+        "target": "2",
+        "sum": 1
+      }
+      sinon.stub(transactionService, "TransactionListCsv")
+        .callsFake((data) => {
+          return true;
+        });
+
+      after(function () {
+        transactionService.TransactionListCsv.restore();
+      });
+
+      it('should pass validation', async function () {
+        const id = 1;
+        const res = await request(server)
+          .get(`/cards/${id}/file-transactions/`)
+
+        expect(res.statusCode).to.be.eq(200);
+        expect(res.body).to.be.true;
+      });
+      it('should return error with NaN cardId', async function () {
+        const id = 'test';
+        const res = await request(server)
+          .get(`/cards/${id}/file-transactions/`)
+
+        expect(res.statusCode).to.be.eq(404);
+        expect(res.error).to.be.not.empty;
+        expect(res.error.text).to.be.eq('Card not found');
       });
     });
   });

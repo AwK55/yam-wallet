@@ -59,5 +59,10 @@ module.exports = {
       })
       ctx.body = await transactiondService.TransactionListCsv(id);
     }
+    else {
+      ctx.status = 404;
+      ctx.body = 'Card not found';
+      return;
+    }
   }
 }
