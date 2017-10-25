@@ -10,6 +10,6 @@ const payTransactionSchema = new Schema({
 }, options);
 
 module.exports = () => {
-  payTransactionSchema.plugin(global.dbConnection.autoIncrement.plugin, { model: 'Transaction', field: 'id', startAt: 100 });
+ // payTransactionSchema.plugin(global.dbConnection.autoIncrement.plugin, { model: 'Transaction', field: 'id', startAt: 100 });
   Transaction.discriminator('PaymentMobile', payTransactionSchema);
 }

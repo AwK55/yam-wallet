@@ -13,6 +13,6 @@ const transferTransactionSchema = new Schema({
 }, options);
 
 module.exports = () => {
-  transferTransactionSchema.plugin(global.dbConnection.autoIncrement.plugin, { model: 'Transaction', field: 'id', startAt: 100 });
+  //transferTransactionSchema.plugin(global.dbConnection.autoIncrement.plugin, { model: 'Transaction', field: 'id', startAt: 100 });
   return Transaction.discriminator('Transfer', transferTransactionSchema);
 };
