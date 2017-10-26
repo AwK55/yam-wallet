@@ -9,10 +9,6 @@ const cardCollection = require('../models/modelCollection')(Card);
  * @param {any} sum
  * @returns
  */
-function validateBalance(card, sum) {
-
-  return (card.balance + sum) >= 0;
-}
 
 module.exports = {
 
@@ -22,10 +18,8 @@ module.exports = {
   },
 
   async updateBalance(card, sum) {
-    const result = validateBalance(card, sum);
-    if (!result) return 'there are not enought money on this card';
-    card.balance += sum;
-    return await cardCollection.update(card);
+    if (card.updateBalance(sum)) return await cardCollection.update(card);
+    else return false;
   },
 
   async getCard(id) {
@@ -38,7 +32,7 @@ module.exports = {
 
   async remove(id) {
     const res = await cardCollection.remove(id);
-    if(!res) return 'Not found';
-    
+    if (!res) return 'Not found';
+
   }
 };

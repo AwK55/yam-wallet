@@ -11,7 +11,14 @@ const cardSchema = new Schema({
 });
 
 cardSchema.methods.canTransact = function (sum) {
-  return (this.balance - sum) > 0;
+  return (this.balance + sum) >= 0;
+}
+
+cardSchema.methods.updateBalance = function(sum) {
+  const result = this.canTransact(sum);
+  if (!result) return false;
+  this.balance += sum;
+  return true
 }
 
 module.exports = () => {
