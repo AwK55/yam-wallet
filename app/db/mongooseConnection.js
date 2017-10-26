@@ -1,8 +1,8 @@
 const mongoose = require('mongoose'),
   autoIncrement = require('mongoose-auto-increment'),
-  logger =require('./utils/logService')('db');
+  logger =require('../../utils/logService')('db');
 
-const config = require('./config/');
+const config = require('../../config/');
 const db_server = process.env.DB_ENV || 'primary';
 mongoose.Promise = global.Promise;
 

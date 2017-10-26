@@ -1,5 +1,5 @@
 const Koa = require('koa');
-global.dbConnection = require('./mongooseConnection');
+global.dbConnection = require('./app/db/mongooseConnection');
 const middlewares = require('./app/middlewares/index');
 const config = require('./config/index');
 const logger = require('./utils/logService')('app');
