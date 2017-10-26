@@ -15,10 +15,8 @@
 9. add middleware validator (https://github.com/luckcoding/koa-middle-validator)
 
 1. перенести mongooseConnection
-2. проверить тесты. переписать апи функций
-3. поправить логирование
-4. поправить загрузку истории транзацкий  
-5. fix https
+2. переписать апи функций
+4. поправить загрузку истории транзацкий
 
 ## Install
 ```sh
