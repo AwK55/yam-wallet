@@ -7,15 +7,18 @@ Thumbs.db
 *.log
 npm-debug.log*
 .vscode
-public/*
+public/
 !public/assets/
 !public/fonts/
 !public/favicon.ico
 app/views/*
 !app/views/*.src.js
-app/db/
 
 package-lock.json
 logs/
+log/
+/fixtures/
 
 
+app/views/index-server.js
+tests/**/*.snap

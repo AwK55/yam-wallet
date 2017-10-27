@@ -1,26 +1,6 @@
-const cardCollection = require('../models/card/cardCollection')();
-const card = require('../models/card/card');
+const Card = require('../models/card/card')();
+const cardCollection = require('../models/modelCollection')(Card);
 
-cardCollection.db.loadCollection()
-  .catch((res) => {
-    throw new Error('CardCollection is not loaded');
-  });
-
-function haveDublicates(cardNumber) {
-  const dublicates = cardCollection.getFiltered((item) => item.cardNumber = cardNumber);
-  return dublicates.length > 0;
-}
-
-/**
- *validate card logic
- * @param {any} card
- * @returns
- */
-function validateModel(card) {
-  let errors = [];
-  if (haveDublicates(card.cardNumber)) errors.push('Card already added');
-  return errors;
-}
 
 /**
  *check can pay by this card
@@ -29,35 +9,30 @@ function validateModel(card) {
  * @param {any} sum
  * @returns
  */
-function validateBalance(card, sum) {
-
-  return (card.balance + sum) >= 0;
-}
 
 module.exports = {
 
   async create(data) {
-
-    const newCard = card.create(data);
-    const result = validateModel(newCard);
-    if (result.length) return result;
+    const newCard = await new Card(data);
     return await cardCollection.add(newCard);
   },
 
   async updateBalance(card, sum) {
-    const result = validateBalance(card, sum);
-    if (!result) return 'there are not enought money on this card';
-    card.balance += sum;
-    return await cardCollection.update();
-  },
-  getCard(id) {
-    return cardCollection.getRecord(id);
-  },
-  getCardsList() {
-    return cardCollection.getAll();
+    if (card.updateBalance(sum)) return await cardCollection.update(card);
+    else return false;
   },
 
-  remove(id) {
-    return cardCollection.remove(id);
+  async getCard(id) {
+    return await cardCollection.getRecord(id);
+  },
+
+  async getCardsList() {
+    return await cardCollection.getAll();
+  },
+
+  async remove(id) {
+    const res = await cardCollection.remove(id);
+    if (!res) return 'Not found';
+
   }
 };

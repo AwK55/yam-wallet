@@ -13,12 +13,14 @@ module.exports = (lab) => {
       msgFormat
     ),
     transports: [
-      new winston.transports.Console()
+      new winston.transports.Console({ level: 'error' }),
+      new winston.transports.File({
+        filename: 'log/combined.log',
+        level: process.env.NODE_ENV === 'DEV' ? 'debug' : 'info'
+      })
     ],
     exceptionHandlers: [
       new winston.transports.Console()
     ]
-
   }
-
 };

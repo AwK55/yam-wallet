@@ -1,78 +1,120 @@
-const cardService = require('./cardService');
-const transactCollection = require('../models/transaction/transactionCollection')();
-const transactionModel = require('../models/transaction/transaction');
+const cardService = require('./cardService'),
+  csvService = require('./csvService'),
+  dataAnonymazierStream = require('./dataAnonymazier');
+  transaction = require('../models/transaction/transaction'),
 
-transactCollection.db.loadCollection()
-  .catch((res) => {
-    throw new Error('transactCollection is not loaded');
-  });
+  PayMobile = require('../models/transaction/payMobile')(),
+  Transfer = require('../models/transaction/transfer')(),
+  transactCollection = require('../models/modelCollection')(transaction.model());
 
+  const Transaction = transaction.model();
 /**
  * validate transaction logic
  *
  * @param {transaction} transaction
  * @returns
  */
-function validateModel(transaction) {
+function validateModel(model) {
   let errors = [];
-  if (Math.abs(transaction.sum) > transactionModel.getMaxLimit())
-    errors.push(`Max transaction amount ${transactionModel.getMaxLimit()}`);
+  if (Math.abs(model.sum) > transaction.getMaxLimit())
+    errors.push(`Max transaction amount ${transaction.getMaxLimit()}`);
 
   return errors;
 }
 
-function getSenderInfo(data) {
-  const newData = Object.create(data);
-  const card = cardService.getCard(newData.data.targetCardId);
-  if (card && card.cardNumber) newData.data.cardNumber = card.cardNumber;
-
+async function getSenderInfo(data) {
+  const newData = Object.assign({}, data);
+  const card = await cardService.getCard(newData.data.cardId);
+  if (card && card.cardNumber) {
+    newData.data.cardNumber = card.cardNumber;
+    newData.data.card = card._id;
+  }
   return newData;
 }
 
-function getReceiverInfo(data) {
+async function getReceiverInfo(data) {
   const newData = {};
+  newData.data = {};
 
-  newData.data = {}
-  newData.cardId = data.data.targetCardId;
-  newData.data.senderCardId = data.cardId;
+  newData.cardId = data.data.cardId;
+  newData.data.cardId = data.cardId;
 
-  const card = cardService.getCard(newData.data.senderCardId);
-  if (card && card.cardNumber) newData.data.cardNumber = card.cardNumber;
-  
+  const card = await cardService.getCard(newData.data.cardId);
+  if (card && card.cardNumber) {
+    newData.data.cardNumber = card.cardNumber;
+    newData.data.card = card._id;
+  }
+
   newData.sum = -data.sum;
-  return Object.assign(Object.create(data),newData);
+  return Object.assign(Object.assign({}, data), newData);
+}
+
+async function createTypedTransaction(data) {
+  switch (data.type) {
+    case 'paymentMobile':
+      return await new PayMobile(data);
+    case 'card2Card':
+      return await new Transfer(data);
+    default:
+      return await new Transaction(data);
+  }
 }
 
 module.exports = {
 
-  transactionType: transactionModel.transactionType,
+  transactionType: transaction.transactionType,
 
   async create(data) {
-    const newTransaction = transactionModel.create(data);
-    const card = cardService.getCard(newTransaction.cardId);
+    const newTransaction = await createTypedTransaction(data);
+    const card = await cardService.getCard(data.cardId);
+    newTransaction.card = card._id;
 
     let result = validateModel(newTransaction);
     if (result.length) return result;
-    result = await cardService.updateBalance(card, newTransaction.sum);
-    if (result) return result;
-    return await transactCollection.add(newTransaction);
+    //if (result) return result;
+    const newTr = await transactCollection.add(newTransaction);
+    await cardService.updateBalance(card, newTransaction.sum);
+    return newTr;
   },
 
   async transfer(data) {
     if (data.cardId == data.data) return "Cannot transfer to this card";
 
-    const sendRes = await this.create(getSenderInfo(data));
-
-    if (sendRes.length) return sendRes;
-    return await this.create(getReceiverInfo(data));
+    const sendRes = await this.create(await getSenderInfo(data));
+    return await this.create(await getReceiverInfo(data));
   },
 
-  transactionList(cardId) {
-    return transactCollection.getFiltered((item) => item.cardId == cardId);
+  async transactionList(cardId) {
+    // rewrite to cursor
+    const card = await cardService.getCard(cardId);
+    return await transactCollection.getFiltered({ card: card._id });
   },
 
-  allTransactions() {
-    return transactCollection.getAll();
+  async allTransactions() {
+    return await transactCollection.getAll();
+  },
+
+  async TransactionListCsv(cardId) {
+    const options = {
+      headers: ['Time', 'Sum', 'Type', 'Data'],
+      alias: {
+        'Time': 'time',
+        'Sum': 'sum',
+        'Type': 'type'
+      },
+      virtuals: {
+        'Data': function (doc) {
+          if (typeof doc.data === 'string') return doc.data;
+          if (doc.cardNumber) return doc.cardNumber;
+          else doc.phoneNumber;
+        }
+      }
+    };
+
+    const card = await cardService.getCard(cardId);
+    return await transactCollection
+      .getFilteredStream({ card: card._id })
+      .pipe(dataAnonymazierStream())
+      .pipe(csvService(options));
   }
-
 };
